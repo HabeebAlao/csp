@@ -49,16 +49,14 @@ int main(int argc, char *argv[])
 
 
 
-    char echoText[50]; // I/O buffer
-    printf("Please eneter your text here: ");
-    scanf("%s", echoText);
+   
 
     char sendbuffer[BUFSIZE];
     // code to transmit what the user entered
 
     // clntSock is connected to a client!
     snprintf(sendbuffer, sizeof(sendbuffer), "%s\r\n", echoString);
-    ssize_t numBytesSent = send(sock, echoText, strlen(echoText), 0); //Send date and time string to the client 
+    ssize_t numBytesSent = send(sock, echoString, strlen(echoString), 0); //Send date and time string to the client 
     if (numBytesSent < 0)
       DieWithSystemMessage("send() failed");
 
