@@ -18,6 +18,7 @@ int main(int argc, char *argv[])
         DieWithUserMessage("Parameter(s)", "<Server Address> <Server Port>");
 
     char *servIP = argv[1];
+    char *echoString = argv[3];
 
     // First arg: server IP address (dotted quad
     in_port_t servPort = atoi(argv[2]);
@@ -52,11 +53,11 @@ int main(int argc, char *argv[])
     printf("Please eneter your text here: ");
     scanf("%s", echoText);
 
-    char sentText[BUFSIZE];
+    char sendbuffer[BUFSIZE];
     // code to transmit what the user entered
 
     // clntSock is connected to a client!
-    snprintf(sentText, sizeof(sentText), "%s\n", echoText); //Create data and time string in outgoing buffer
+    snprintf(sendbuffer, sizeof(sendbuffer), "%s\r\n", echoString);
     ssize_t numBytesSent = send(sock, echoText, strlen(echoText), 0); //Send date and time string to the client 
     if (numBytesSent < 0)
       DieWithSystemMessage("send() failed");
@@ -74,7 +75,7 @@ int main(int argc, char *argv[])
     }
 
 
-    if (numBytes < 0)
+    if (numBytes2 < 0)
         DieWithSystemMessage("recv() failed");
     // else if (numBytes == 0)
     //    DieWithUserMessage ("recv()", "connection closed prematurely");
