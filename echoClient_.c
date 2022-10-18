@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
     // code to transmit what the user entered
 
     // clntSock is connected to a client!
-    snprintf(&sentText, sizeof(sentText), "%.24s\r\n"); //Create data and time string in outgoing buffer
+    snprintf( &sentText, sizeof(sentText), "%.24s\r\n"); //Create data and time string in outgoing buffer
     ssize_t numBytesSent = send(sock, echoText, strlen(echoText), 0); //Send date and time string to the client 
     if (numBytesSent < 0)
       DieWithSystemMessage("send() failed");
