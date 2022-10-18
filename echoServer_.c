@@ -14,8 +14,7 @@ static const int MAXPENDING = 5; // Maximum outstanding connection requests
 int main(int argc, char *argv[]) {
 	time_t	ticks;  //variable to hold date and time data
 	char sendbuffer[BUFSIZE]; // Buffer for sending data to the client
-	char textBufferFromClient[BUFSIZE];
-	
+	char recvbuffer[BUFSIZE];
 	int numBytes = 0; 
 
 	if (argc != 2) // Test for correct number of arguments
@@ -51,12 +50,14 @@ int main(int argc, char *argv[]) {
       DieWithSystemMessage("accept() failed");
 
 	
+
 	// take what was sent from the client and put it into a string array so it can be send back to the client
-    while ((numBytes = recv(clntSock, textBufferFromClient, BUFSIZE - 1, 0)) > 0)
+   // take what was echoed back from the server and print out to stdoutput
+    while ((numBytes = recv(clntSock, recvbuffer, BUFSIZE - 1, 0)) > 0)
     {
-        textBufferFromClient[numBytes] = '\0'; // Terminate the string!
+        recvbuffer[numBytes] = '\0'; // Terminate the string!
         // Print the echo buffer
-        //fputs(textBufferFromClient, stdout);
+        fputs(recvbuffer, stdout);
         /* Receive up to the buffer size (minus 1 to leave space for
         a null terminator) bytes from the sender */
     }
