@@ -45,12 +45,6 @@ int main(int argc, char *argv[])
     if (connect(sock, (struct sockaddr *)&servAddr, sizeof(servAddr)) < 0)
         DieWithSystemMessage("connect() failed");
 
-
-
-
-
-   
-
     char sendbuffer[BUFSIZE];
     // code to transmit what the user entered
 
