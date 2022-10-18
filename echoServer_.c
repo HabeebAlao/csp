@@ -64,8 +64,8 @@ int main(int argc, char *argv[]) {
 
 
     // clntSock is connected to a client!
-    snprintf(sendbuffer, sizeof(sendbuffer), "%s\n", textBufferFromClient); //Create data and time string in outgoing buffer
-    ssize_t numBytesSent = send(clntSock, textBufferFromClient, strlen(textBufferFromClient), 0); //Send date and time string to the client 
+    snprintf(sendbuffer, sizeof(sendbuffer), "%s\n", recvbuffer); //Create data and time string in outgoing buffer
+    ssize_t numBytesSent = send(clntSock, recvbuffer, strlen(recvbuffer), 0); //Send date and time string to the client 
     if (numBytesSent < 0)
       DieWithSystemMessage("send() failed");
 
