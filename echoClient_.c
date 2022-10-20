@@ -11,6 +11,7 @@
 int main(int argc, char *argv[])
 {
     char recvbuffer[BUFSIZE]; // I/O buffer
+    char sendbuffer[BUFSIZE];
     int numBytes = 0;
     int numBytes2 = 0;
 
@@ -45,12 +46,10 @@ int main(int argc, char *argv[])
     if (connect(sock, (struct sockaddr *)&servAddr, sizeof(servAddr)) < 0)
         DieWithSystemMessage("connect() failed");
 
-    char sendbuffer[BUFSIZE];
-    // code to transmit what the user entered
-
+    
     // clntSock is connected to a client!
     snprintf(sendbuffer, sizeof(sendbuffer), "%s\r\n", echoString);
-    ssize_t numBytesSent = send(sock, echoString, strlen(echoString), 0); //Send date and time string to the client 
+    ssize_t numBytesSent = send(sock, sendbuffer, strlen(sendbuffer), 0); //Send date and time string to the client 
     if (numBytesSent < 0)
       DieWithSystemMessage("send() failed");
 
