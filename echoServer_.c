@@ -58,8 +58,7 @@ int main(int argc, char *argv[]) {
         recvbuffer[numBytes] = '\0'; // Terminate the string!
         // Print the echo buffer
         fputs(recvbuffer, stdout);
-	    if(ststr(buffer, "\r\n")>0)
-		break;
+	    
         /* Receive up to the buffer size (minus 1 to leave space for
         a null terminator) bytes from the sender */
     }
