@@ -85,8 +85,8 @@ int main(int argc, char *argv[])
 
 			if (strcmp(uri, "/index.html") == 0)
 			{
-				FILE *fptr;
 
+				FILE *fptr;
 				fptr = fopen("./index.html", "r");
 
 				if (fptr == NULL)
@@ -96,40 +96,20 @@ int main(int argc, char *argv[])
 				}
 
 				int count = 0;
-				char c;
-				for (c = getc(fptr); c != EOF; c = getc(fptr))
-				{
-					count = count + 1;
-				}
+				
+				stat(uri, &sb);
+
+				count = sb.st_size;
 
 				snprintf(sendbuffer, sizeof(sendbuffer), "HTTP/1.0 200 File Found\r\nContent-Length: %d\r\nConnection: close\r\nServer: httpserver\r\n\r\n", count);
-				ssize_t numBytesSent2 = send(clntSock, sendbuffer, strlen(sendbuffer), 0);
-				//char ch;
 
-				fread(sendbuffer, count, 1, fptr);
-				
-				/*
-				do
-				{
-					ch = fgetc(fptr);
-					printf("%c", ch);
-
-					// Checking if character is not EOF.
-					// If it is EOF stop eading.
-
-					snprintf(sendbuffer, sizeof(sendbuffer), "%c", ch);
-					// snprintf(sendbuffer, sizeof(sendbuffer), ERROR_PAGE);
-
-				} while (ch != EOF);
-				*/
-
-				fclose(fptr);
+				fread(sendbuffer, count+1, 1, fptr);
 
 				count = 0;
 
 				// snprintf(sendbuffer, sizeof(sendbuffer), HOME_PAGE);
 
-				
+				fclose(fptr);
 			}
 			else
 			{
@@ -147,5 +127,6 @@ int main(int argc, char *argv[])
 		}
 	}
 }
+
 
 
