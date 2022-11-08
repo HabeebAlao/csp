@@ -87,7 +87,7 @@ int main(int argc, char *argv[]) {
 
 			fptr = fopen("index.html","r");
 
-			snprintf(sendbuffer, sizeof(sendbuffer), fptr);
+			snprintf(sendbuffer, sizeof(sendbuffer), *fptr);
 			//snprintf(sendbuffer, sizeof(sendbuffer), HOME_PAGE);
 
 			fclose(fptr);
@@ -99,8 +99,8 @@ int main(int argc, char *argv[]) {
 
 			fptr2 = fopen("error.html","r");
 
-			snprintf(sendbuffer, sizeof(sendbuffer), fptr2);
-		s	nprintf(sendbuffer, sizeof(sendbuffer), ERROR_PAGE);
+			snprintf(sendbuffer, sizeof(sendbuffer), *fptr2);
+			//snprintf(sendbuffer, sizeof(sendbuffer), ERROR_PAGE);
 		}
 
 		ssize_t numBytesSent = send(clntSock, sendbuffer, strlen(sendbuffer), 0);
