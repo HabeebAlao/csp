@@ -100,6 +100,7 @@ int main(int argc, char *argv[]) {
 
 
 			int count = 0;
+			char c;
 			for (c = getc(fptr); c != EOF; c = getc(fp)){
 				count = count + 1;
 			}	
