@@ -91,7 +91,7 @@ int main(int argc, char *argv[]) {
 		{
 			FILE *fptr;
 
-			fptr = fopen("csp/index.html","r");
+			fptr = fopen("./index.html","r");
 
 			if (fptr == NULL) {
 				printf("Could not open file ");
@@ -135,10 +135,6 @@ int main(int argc, char *argv[]) {
 		}
 		else
 		{
-
-			FILE *fptr2;
-
-			fptr2 = fopen("csp/error.html","r");
 
 			//snprintf(sendbuffer, sizeof(sendbuffer), *fptr2);
 			snprintf(sendbuffer, sizeof(sendbuffer), ERROR_PAGE);
