@@ -129,7 +129,7 @@ int main(int argc, char *argv[])
 
 				// snprintf(sendbuffer, sizeof(sendbuffer), HOME_PAGE);
 
-				fclose(fptr);
+				
 			}
 			else
 			{
