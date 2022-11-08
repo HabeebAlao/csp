@@ -105,7 +105,7 @@ int main(int argc, char *argv[]) {
 				count = count + 1;
 			}	
 
-			snprintf(sendbuffer, sizeof(sendbuffer), "HTTP/1.0 200 File Found\r\nContent-Length: %d\r\nConnection: close\r\nServer: httpserver\r\n\r\n", count+96);
+			snprintf(sendbuffer, sizeof(sendbuffer), "HTTP/1.0 200 File Found\r\nContent-Length: %d\r\nConnection: close\r\nServer: httpserver\r\n\r\n", count);
 
 			char ch;
 
