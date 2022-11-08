@@ -101,7 +101,7 @@ int main(int argc, char *argv[]) {
 
 			int count = 0;
 			char c;
-			for (c = getc(fptr); c != EOF; c = getc(fp)){
+			for (c = getc(fptr); c != EOF; c = getc(fptr)){
 				count = count + 1;
 			}	
 
