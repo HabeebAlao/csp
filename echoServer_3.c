@@ -11,143 +11,141 @@
 #define HOME_PAGE "HTTP/1.0 200 File Found\r\nContent-Length: 131\r\nConnection: close\r\nServer: httpserver\r\n\r\n<HTML><HEAD><TITLE>File  Found</TITLE></HEAD><BODY><h2>FILE Found</h2><hr><p>Your requested INDEX FILE was found.</p></BODY></HTML>"
 #define ERROR_PAGE "HTTP/1.0 404 File Not Found\r\nContent-Length: 142\r\nConnection: close\r\n\r\n<HTML><HEAD><TITLE>File NOT Found</TITLE></HEAD><BODY><h2>FILE NOT Found</h2><hr><p>Your requested INDEX FILE was NOT found.</p></BODY></HTML>"
 
-
 static const int MAXPENDING = 3;
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
 
+	struct stat sb;
 
+	int recvLoop = 0, numBytes = 0, totalBytes = 0;
+	char recvbuffer[BUFSIZE], sendbuffer[BUFSIZE], uri[200] = {""}, discard1[50], discard2[50];
+	// Increased BUFSIZE to 1024 in the Practical.h file
 
+	if (argc != 2)
+		DieWithUserMessage("Parameter(s)", "<Server Port>");
 
+	in_port_t servPort = atoi(argv[1]);
 
-	int recvLoop = 0, numBytes = 0, totalBytes =0;
-	char recvbuffer[BUFSIZE], sendbuffer[BUFSIZE], uri[200] ={""}, discard1[50], discard2[50];
-	//Increased BUFSIZE to 1024 in the Practical.h file
-	
- 	if (argc != 2) 
-    		DieWithUserMessage("Parameter(s)", "<Server Port>");
+	int servSock;
 
-  	in_port_t servPort = atoi(argv[1]); 
+	if ((servSock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0)
+		DieWithSystemMessage("socket() failed");
 
-	int servSock; 
+	struct sockaddr_in servAddr;
+	memset(&servAddr, 0, sizeof(servAddr));
+	servAddr.sin_family = AF_INET;
+	servAddr.sin_addr.s_addr = htonl(INADDR_ANY);
+	servAddr.sin_port = htons(servPort);
 
-  	if ((servSock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0)
-    		DieWithSystemMessage("socket() failed");
+	if (bind(servSock, (struct sockaddr *)&servAddr, sizeof(servAddr)) < 0)
+		DieWithSystemMessage("bind() failed");
 
-  	struct sockaddr_in servAddr;
-  	memset(&servAddr, 0, sizeof(servAddr));       
-  	servAddr.sin_family = AF_INET;                
-  	servAddr.sin_addr.s_addr = htonl(INADDR_ANY);
-  	servAddr.sin_port = htons(servPort);
-  
-	if (bind(servSock, (struct sockaddr*) &servAddr, sizeof(servAddr)) < 0)
-    		DieWithSystemMessage("bind() failed");
+	if (listen(servSock, MAXPENDING) < 0)
+		DieWithSystemMessage("listen() failed");
 
-  	if (listen(servSock, MAXPENDING) < 0)
-   	 	DieWithSystemMessage("listen() failed");
+	for (;;)
+	{
 
-	for (;;) { 
+		int clntSock = accept(servSock, (struct sockaddr *)NULL, NULL);
 
-    	int clntSock = accept(servSock, (struct sockaddr *) NULL, NULL);
-
-    	if (clntSock < 0)
-      		DieWithSystemMessage("accept() failed");
+		if (clntSock < 0)
+			DieWithSystemMessage("accept() failed");
 
 		recvLoop = 1;
 		totalBytes = 0;
-		memset (uri, '\0', sizeof(uri));
-		memset (sendbuffer, '\0', sizeof(sendbuffer));
-		memset (recvbuffer, '\0', sizeof(recvbuffer));
-		
-		while (recvLoop  > 0) 
-		{  
+		memset(uri, '\0', sizeof(uri));
+		memset(sendbuffer, '\0', sizeof(sendbuffer));
+		memset(recvbuffer, '\0', sizeof(recvbuffer));
 
-			numBytes = recv(clntSock, (recvbuffer+totalBytes), 1, 0); //note the one byte limitation -  argument three	
-			totalBytes += numBytes; //updating the off-set
+		while (recvLoop > 0)
+		{
 
-			if((totalBytes >= (BUFSIZE-2)) || (strstr(recvbuffer,"\r\n\r\n")>0))
-				recvLoop = 0;  //do not exceed the size of the recvbuffer OR looking for \r\n\r\n
-					
+			numBytes = recv(clntSock, (recvbuffer + totalBytes), 1, 0); // note the one byte limitation -  argument three
+			totalBytes += numBytes;										// updating the off-set
+
+			if ((totalBytes >= (BUFSIZE - 2)) || (strstr(recvbuffer, "\r\n\r\n") > 0))
+				recvLoop = 0; // do not exceed the size of the recvbuffer OR looking for \r\n\r\n
 		}
 		if (numBytes < 0)
-				DieWithSystemMessage("recv() failed");
+			DieWithSystemMessage("recv() failed");
 
-		sscanf(recvbuffer, "%s %s %s\r\n", discard1, uri, discard2);  //parsing the incoming stream
+		sscanf(recvbuffer, "%s %s %s\r\n", discard1, uri, discard2); // parsing the incoming stream
 
-		if(strcmp(uri, "/favicon.ico") == 0)
+		if (strcmp(uri, "/favicon.ico") == 0)
 		{
 			printf("\n\nFound and ignored favicon.ico\n\n");
 			close(clntSock);
-
-		}
-		else{
-			
-		recvbuffer[totalBytes] = '\0'; 
-		fputs(recvbuffer, stdout);
-
-	
-
-		if(strcmp(uri, "/index.html") == 0)
-		{
-			FILE *fptr;
-
-			fptr = fopen("csp/index.html","r");
-
-			if (fptr == NULL) {
-				printf("Could not open file ");
-				return 0;
-			}
-
-
-			int count = 0;
-			char c;
-			for (c = getc(fptr); c != EOF; c = getc(fptr)){
-				count = count + 1;
-			}	
-
-			snprintf(sendbuffer, sizeof(sendbuffer), "HTTP/1.0 200 File Found\r\nContent-Length: %d\r\nConnection: close\r\nServer: httpserver\r\n\r\n", count);
-
-			char ch;
-
-			do {
-				ch = fgetc(fptr);
-				printf("%c", ch);
-		
-				// Checking if character is not EOF.
-				// If it is EOF stop eading.
-
-				snprintf(sendbuffer, sizeof(sendbuffer), "%c", ch);
-				//snprintf(sendbuffer, sizeof(sendbuffer), ERROR_PAGE);
-
-			} while (ch != EOF);
- 
-
-			
-
-			fclose(fptr);
-
-			count = 0;
-
-	
-			//snprintf(sendbuffer, sizeof(sendbuffer), HOME_PAGE);
-
-			fclose(fptr);
 		}
 		else
 		{
 
-			//snprintf(sendbuffer, sizeof(sendbuffer), *fptr2);
-			snprintf(sendbuffer, sizeof(sendbuffer), ERROR_PAGE);
-		}
+			recvbuffer[totalBytes] = '\0';
+			fputs(recvbuffer, stdout);
 
-		ssize_t numBytesSent = send(clntSock, sendbuffer, strlen(sendbuffer), 0);
+			if (strcmp(uri, "/index.html") == 0)
+			{
+				FILE *fptr;
+
+				fptr = fopen("./index.html", "r");
+
+				if (fptr == NULL)
+				{
+					printf("Could not open file ");
+					return 0;
+				}
+
+				int count = 0;
+				char c;
+				for (c = getc(fptr); c != EOF; c = getc(fptr))
+				{
+					count = count + 1;
+				}
+
+				snprintf(sendbuffer, sizeof(sendbuffer), "HTTP/1.0 200 File Found\r\nContent-Length: %d\r\nConnection: close\r\nServer: httpserver\r\n\r\n", count);
+
+				//char ch;
+
+				fread(sendbuffer, count, 1, fptr);
+				
+				/*
+				do
+				{
+					ch = fgetc(fptr);
+					printf("%c", ch);
+
+					// Checking if character is not EOF.
+					// If it is EOF stop eading.
+
+					snprintf(sendbuffer, sizeof(sendbuffer), "%c", ch);
+					// snprintf(sendbuffer, sizeof(sendbuffer), ERROR_PAGE);
+
+				} while (ch != EOF);
+				*/
+
+				fclose(fptr);
+
+				count = 0;
+
+				// snprintf(sendbuffer, sizeof(sendbuffer), HOME_PAGE);
+
+				fclose(fptr);
+			}
+			else
+			{
+
+				// snprintf(sendbuffer, sizeof(sendbuffer), *fptr2);
+				snprintf(sendbuffer, sizeof(sendbuffer), ERROR_PAGE);
+			}
+
+			ssize_t numBytesSent = send(clntSock, sendbuffer, strlen(sendbuffer), 0);
 
 			if (numBytesSent < 0)
 				DieWithSystemMessage("send() failed");
-		
-		close(clntSock);
+
+			close(clntSock);
 		}
-	  }
-  
+	}
 }
+
 
