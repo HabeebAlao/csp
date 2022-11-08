@@ -116,7 +116,7 @@ int main(int argc, char *argv[]) {
 				// Checking if character is not EOF.
 				// If it is EOF stop eading.
 
-				snprintf(sendbuffer, sizeof(sendbuffer), *ch);
+				snprintf(sendbuffer, sizeof(sendbuffer), "%c", ch);
 				//snprintf(sendbuffer, sizeof(sendbuffer), ERROR_PAGE);
 
 			} while (ch != EOF);
