@@ -16,6 +16,10 @@ static const int MAXPENDING = 3;
 
 int main(int argc, char *argv[]) {
 
+
+
+
+
 	int recvLoop = 0, numBytes = 0, totalBytes =0;
 	char recvbuffer[BUFSIZE], sendbuffer[BUFSIZE], uri[200] ={""}, discard1[50], discard2[50];
 	//Increased BUFSIZE to 1024 in the Practical.h file
@@ -81,13 +85,49 @@ int main(int argc, char *argv[]) {
 		recvbuffer[totalBytes] = '\0'; 
 		fputs(recvbuffer, stdout);
 
+	
+
 		if(strcmp(uri, "/index.html") == 0)
 		{
 			FILE *fptr;
 
 			fptr = fopen("csp/index.html","r");
 
-			snprintf(sendbuffer, sizeof(sendbuffer), *fptr);
+			if (fptr == NULL) {
+				printf("Could not open file ");
+				return 0;
+			}
+
+
+			int count = 0;
+			for (c = getc(fp); c != EOF; c = getc(fp)){
+				count = count + 1;
+			}	
+
+			snprintf(sendbuffer, sizeof(sendbuffer), "HTTP/1.0 200 File Found\r\nContent-Length: %d\r\nConnection: close\r\nServer: httpserver\r\n\r\n", count);
+
+			char ch;
+
+			do {
+				ch = fgetc(fptr);
+				printf("%c", ch);
+		
+				// Checking if character is not EOF.
+				// If it is EOF stop eading.
+
+				snprintf(sendbuffer, sizeof(sendbuffer), ch);
+				//snprintf(sendbuffer, sizeof(sendbuffer), ERROR_PAGE);
+
+			} while (ch != EOF);
+ 
+
+			
+
+			fclose(fptr);
+
+			count = 0;
+
+	
 			//snprintf(sendbuffer, sizeof(sendbuffer), HOME_PAGE);
 
 			fclose(fptr);
@@ -99,8 +139,8 @@ int main(int argc, char *argv[]) {
 
 			fptr2 = fopen("csp/error.html","r");
 
-			snprintf(sendbuffer, sizeof(sendbuffer), *fptr2);
-			//snprintf(sendbuffer, sizeof(sendbuffer), ERROR_PAGE);
+			//snprintf(sendbuffer, sizeof(sendbuffer), *fptr2);
+			snprintf(sendbuffer, sizeof(sendbuffer), ERROR_PAGE);
 		}
 
 		ssize_t numBytesSent = send(clntSock, sendbuffer, strlen(sendbuffer), 0);
@@ -113,3 +153,4 @@ int main(int argc, char *argv[]) {
 	  }
   
 }
+
