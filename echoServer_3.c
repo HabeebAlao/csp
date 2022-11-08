@@ -91,7 +91,7 @@ int main(int argc, char *argv[]) {
 		{
 			FILE *fptr;
 
-			fptr = fopen("./index.html","r");
+			fptr = fopen("csp/index.html","r");
 
 			if (fptr == NULL) {
 				printf("Could not open file ");
