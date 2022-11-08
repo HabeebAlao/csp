@@ -103,7 +103,7 @@ int main(int argc, char *argv[])
 				}
 
 				snprintf(sendbuffer, sizeof(sendbuffer), "HTTP/1.0 200 File Found\r\nContent-Length: %d\r\nConnection: close\r\nServer: httpserver\r\n\r\n", count);
-
+				ssize_t numBytesSent2 = send(clntSock, sendbuffer, strlen(sendbuffer), 0);
 				//char ch;
 
 				fread(sendbuffer, count, 1, fptr);
