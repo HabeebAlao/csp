@@ -85,7 +85,7 @@ int main(int argc, char *argv[]) {
 		{
 			FILE *fptr;
 
-			fptr = fopen("index.html","r");
+			fptr = fopen("csp/index.html","r");
 
 			snprintf(sendbuffer, sizeof(sendbuffer), *fptr);
 			//snprintf(sendbuffer, sizeof(sendbuffer), HOME_PAGE);
@@ -97,7 +97,7 @@ int main(int argc, char *argv[]) {
 
 			FILE *fptr2;
 
-			fptr2 = fopen("error.html","r");
+			fptr2 = fopen("csp/error.html","r");
 
 			snprintf(sendbuffer, sizeof(sendbuffer), *fptr2);
 			//snprintf(sendbuffer, sizeof(sendbuffer), ERROR_PAGE);
