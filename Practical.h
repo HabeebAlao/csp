@@ -24,7 +24,7 @@ int SetupTCPClientSocket(const char *server, const char *service);
 
 enum sizeConstants {
   MAXSTRINGLENGTH = 128,
-  BUFSIZE = 512,
+  BUFSIZE = 1024,
 };
 
 #endif // PRACTICAL_H_
